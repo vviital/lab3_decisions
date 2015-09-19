@@ -1,3 +1,4 @@
+import gui.GuiLab3;
 import model.Edge;
 import model.Flow;
 
@@ -12,11 +13,13 @@ import java.util.Scanner;
 public class Runner {
 
     public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-        PrintWriter out = new PrintWriter(System.out);
-        new Solver().solve(in, out);
-        in.close();
-        out.close();
+
+        new GuiLab3();
+//        Scanner in = new Scanner(System.in);
+//        PrintWriter out = new PrintWriter(System.out);
+//        new Solver().solve(in, out);
+//        in.close();
+//        out.close();
     }
 }
 

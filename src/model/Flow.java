@@ -148,6 +148,4 @@ public class Flow {
         return this.memory.size();
     }
 
-
-
 }
