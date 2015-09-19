@@ -105,5 +105,25 @@ public class Flow {
         return dinic(from, sink);
     }
 
+    private void dfs(int cur, List<Integer> array){
+        dist[cur] = 1;
+        array.add(cur);
+        for(int x : indexes[cur]){
+            Edge e = this.edges.get(x);
+            int to = e.getTo();
+            if (dist[to] == 1 || e.getFlow() == e.getCap()) continue;
+            dfs(to, array);
+        }
+    }
+
+    // Return left part indexes
+    public List<Integer> minimumCut(){
+        List<Integer> ans = new ArrayList();
+        for(int i = 0; i < this.dist.length; ++i){
+            dist[i] = 0;
+        }
+        dfs(from, ans);
+        return ans;
+    }
 
 }

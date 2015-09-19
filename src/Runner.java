@@ -38,6 +38,10 @@ class Solver{
         Flow f = new Flow(edgeList, n + 2, 0, n + 1);
         long ans = f.getFlow();
         out.println(ans);
+        List<Integer> leftPart = f.minimumCut();
+        for(int x : leftPart){
+            System.out.println("x = " + x);
+        }
     }
 }
 
