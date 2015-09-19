@@ -21,6 +21,8 @@ public class Flow {
 
     private int sink;
 
+    private List<FlowMatrix> memory;
+
     private Flow(){
 
     }
@@ -31,6 +33,7 @@ public class Flow {
         this.edges.add(new Edge(from, to, cap, cost));
         this.indexes[to].add(this.edges.size());
         this.edges.add(new Edge(to, from, 0, -cost));
+        this.memory = new ArrayList();
     }
 
     public Flow(List<Edge> e, int n, int from, int sink){
@@ -125,5 +128,26 @@ public class Flow {
         dfs(from, ans);
         return ans;
     }
+
+    private void persist(){
+        FlowMatrix matrix = new FlowMatrix(this.n);
+        for(Edge x : this.edges){
+            int f = x.getFrom();
+            int t = x.getTo();
+            long flow = x.getFlow();
+            matrix.addFlow(f, t, flow);
+        }
+        memory.add(matrix);
+    }
+
+    public FlowMatrix getStep(int i){
+        return this.memory.get(i);
+    }
+
+    public int getStepNumber(){
+        return this.memory.size();
+    }
+
+
 
 }
