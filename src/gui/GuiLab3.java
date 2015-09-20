@@ -165,7 +165,7 @@ public class GuiLab3 {
         this.addRemovableLabel(this.leftPanel, x, y, 400, 20, rightPart.toString(), left); y += 30;
         this.leftPanel.repaint();
         System.out.println("f = " + f);
-
+        this.curstep = 0;
         this.makeRightPanel();
     }
 
