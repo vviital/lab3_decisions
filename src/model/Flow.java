@@ -38,14 +38,14 @@ public class Flow {
 
     public Flow(List<Edge> e, int n, int from, int sink){
         this.n = n;
-        this.indexes = new ArrayList[n + 1];
+        this.indexes = new ArrayList[n];
         this.edges = new ArrayList();
-        for(int i = 0; i < n + 1; ++i) this.indexes[i] = new ArrayList();
+        for(int i = 0; i < indexes.length; ++i) this.indexes[i] = new ArrayList();
         for(Edge x : e){
             addEdge(x.getFrom(), x.getTo(), x.getCap(), x.getCost());
         }
-        this.ptr = new int[n + 1];
-        this.dist = new int[n + 1];
+        this.ptr = new int[n];
+        this.dist = new int[n];
         this.from = from;
         this.sink = sink;
     }
@@ -79,6 +79,7 @@ public class Flow {
                 long push = dfs(from, sink, Long.MAX_VALUE);
                 if (push == 0) break;
                 flow += push;
+                persist();
             }
         }
         return flow;
@@ -120,13 +121,26 @@ public class Flow {
     }
 
     // Return left part indexes
-    public List<Integer> minimumCut(){
+    public List<Integer> minimumCutLeft(){
         List<Integer> ans = new ArrayList();
         for(int i = 0; i < this.dist.length; ++i){
             dist[i] = 0;
         }
         dfs(from, ans);
+        ans.remove(0);
         return ans;
+    }
+
+    public List<Integer> minimumCutRight(){
+        List<Integer> left = this.minimumCutLeft();
+        Set<Integer> right = new HashSet();
+        for(int i = 1; i < n - 1; ++i){
+            right.add(i);
+        }
+        left.forEach(x -> {
+            right.remove(x);
+        });
+        return new ArrayList(right);
     }
 
     private void persist(){
@@ -136,6 +150,9 @@ public class Flow {
             int t = x.getTo();
             long flow = x.getFlow();
             matrix.addFlow(f, t, flow);
+        }
+        for(int i = 0; i < this.dist.length; ++i){
+            matrix.setDist(i, dist[i]);
         }
         memory.add(matrix);
     }

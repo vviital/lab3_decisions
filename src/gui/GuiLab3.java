@@ -1,7 +1,9 @@
 package gui;
 
+import model.Edge;
+import model.Flow;
+
 import javax.swing.*;
-import javax.swing.tree.ExpandVetoException;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -28,6 +30,12 @@ public class GuiLab3 {
     private java.util.List<Component> left;
 
     private java.util.List<Component> right;
+
+    private Flow flows;
+
+    private int ly;
+
+    private int ry;
 
     public GuiLab3(){
         this.mainframe = new JFrame("MaxFlow");
@@ -78,7 +86,6 @@ public class GuiLab3 {
         JLabel label = new JLabel(text);
         label.setBounds(x, y, w, h);
         panel.add(label);
-        panel.repaint();
         return label;
     }
 
@@ -93,8 +100,8 @@ public class GuiLab3 {
         mem.clear();
     }
 
-    private void addRemovableTextField(JPanel panel, int x, int y, int w, int h, String text, List<Component> mem){
-        JTextField field = new JTextField(text);
+    private void addRemovableTextField(int row, int col, JPanel panel, int x, int y, int w, int h, String text, List<Component> mem){
+        JTextField field = new TextBox(text, x, y, w, h, row, col);
         field.setBounds(x, y, w, h);
         panel.add(field);
         mem.add(field);
@@ -106,7 +113,7 @@ public class GuiLab3 {
         for(int i = 0; i < n; ++i) {
             int temp = x;
             for (int j = 0; j < n; j++) {
-                addRemovableTextField(this.leftPanel, x, y, 40, 20, "0", this.left);
+                addRemovableTextField(i + 1, j + 1, this.leftPanel, x, y, 40, 20, "0", this.left);
                 x += 50;
             }
             x = temp;
@@ -114,11 +121,12 @@ public class GuiLab3 {
         }
 
         JButton goButton = new JButton("Flow!!!");
-        goButton.setBounds(x, y, 100, 20);
+        goButton.setBounds(x, y, 100, 20); y += 30;
+        this.ly = y;
         goButton.addActionListener((event) -> {
-            try{
+            try {
                 flow();
-            } catch (Exception e){
+            } catch (Exception e) {
 
             }
         });
@@ -128,7 +136,39 @@ public class GuiLab3 {
     }
 
     private void flow(){
+        List<Edge> edges = new ArrayList();
+        this.left.stream().filter(x -> x instanceof TextBox).forEach(x -> {
+            TextBox box = (TextBox) x;
+            int i = box.getRow();
+            int j = box.getCol();
+            int value = Integer.parseInt(box.getText());
+            edges.add(new Edge(i, j, value, 0));
+        });
+        edges.add(new Edge(0, 1, Long.MAX_VALUE, 0));
+        edges.add(new Edge(this.n, n + 1, Long.MAX_VALUE, 0));
 
+        this.flows = new Flow(edges, this.n + 2, 0, n + 1);
+        long f = this.flows.getFlow();
+
+        List<Integer> leftPart = this.flows.minimumCutLeft();
+        List<Integer> rightPart = this.flows.minimumCutRight();
+
+        int x = 20, y = ly;
+
+        this.addRemovableLabel(this.leftPanel, x, y, 100, 20, "Total flow: " + Long.toString(f), left); y += 30;
+        this.addRemovableLabel(this.leftPanel, x, y, 100, 20, "Minimum cut: ", left); y += 30;
+        this.addRemovableLabel(this.leftPanel, x, y, 100, 20, "Left part:", left); y += 30;
+        this.addRemovableLabel(this.leftPanel, x, y, 400, 20, leftPart.toString(), left); y += 30;
+        this.addRemovableLabel(this.leftPanel, x, y, 100, 20, "Right part:", left); y += 30;
+        this.addRemovableLabel(this.leftPanel, x, y, 400, 20, rightPart.toString(), left); y += 30;
+        this.leftPanel.repaint();
+        System.out.println("f = " + f);
+
+        this.makeRightPanel();
+    }
+
+    private void makeRightPanel(){
+        
     }
 
 
