@@ -2,6 +2,7 @@ package gui;
 
 import model.Edge;
 import model.Flow;
+import model.FlowMatrix;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,7 +49,8 @@ public class GuiLab3 {
         this.leftPanel.setLayout(null);
         this.leftPanel.setBounds(0, 0, width / 2, height);
 
-        this.rightPanel = new JPanel(null);
+        this.rightPanel = new JPanel();
+        this.rightPanel.setLayout(null);
         this.rightPanel.setBounds(width / 2, 0, width / 2, height);
 
         this.mainframe.add(leftPanel);
@@ -167,8 +169,67 @@ public class GuiLab3 {
         this.makeRightPanel();
     }
 
+
+    private int curstep = 0;
+
     private void makeRightPanel(){
-        
+        removeComponent(this.rightPanel, this.right);
+        int x = 20, y = 20;
+
+        addRemovableLabel(this.rightPanel, x, y, 200, 20, "Current step : " + Integer.toString(curstep + 1), this.right); y += 30;
+
+        y = drawMatrix(y);
+
+        JButton prevButton = new JButton("Previous step");
+        prevButton.setBounds(x, y, 200, 20);
+        prevButton.addActionListener((event) -> {
+            if (curstep != 0) {
+                --curstep;
+                makeRightPanel();
+            }
+        });
+        this.right.add(prevButton);
+        this.rightPanel.add(prevButton);
+
+        x += 250;
+
+        JButton nextButton = new JButton("Next step");
+        nextButton.setBounds(x, y, 200, 20);
+        nextButton.addActionListener((event) -> {
+            if (curstep != this.flows.getStepNumber() - 1){
+                ++curstep;
+                this.makeRightPanel();
+            }
+        });
+        this.right.add(nextButton);
+        this.rightPanel.add(nextButton);
+
+        this.rightPanel.repaint();
+
+    }
+
+    private int drawMatrix(int cy){
+        int x = 20, y = cy;
+        FlowMatrix matrix = this.flows.getStep(curstep);
+        addRemovableLabel(this.rightPanel, x, y, 200, 20, "Current flow: " + matrix.getFlow(), right); y += 30;
+
+        for(int i = 0; i < matrix.size(); ++i){
+            int temp = x;
+            for(int j = 0; j < matrix.size(); ++j){
+                addRemovableLabel(this.rightPanel, x, y, 40, 40, Long.toString(matrix.getFlow(i, j)), right);
+                x += 50;
+            }
+            x = temp;
+            y += 50;
+        }
+        addRemovableLabel(this.rightPanel, x, y, 200, 20, "Layered network:", right); y += 30;
+        for(int i = 0; i < matrix.size(); ++i){
+            this.addRemovableLabel(this.rightPanel, x, y, 40, 40, Integer.toString(matrix.getDist(i)), right);
+            x += 50;
+        }
+        y += 30;
+
+        return y;
     }
 
 

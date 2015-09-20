@@ -73,13 +73,14 @@ public class Flow {
 
     private long dinic(int from, int sink){
         long flow = 0;
+        persist(flow);
         while(bfs(from, sink)){
             for(int i = 0; i < this.ptr.length; ++i) ptr[i] = 0;
             while(true){
                 long push = dfs(from, sink, Long.MAX_VALUE);
                 if (push == 0) break;
                 flow += push;
-                persist();
+                persist(flow);
             }
         }
         return flow;
@@ -143,7 +144,7 @@ public class Flow {
         return new ArrayList(right);
     }
 
-    private void persist(){
+    private void persist(long fl){
         FlowMatrix matrix = new FlowMatrix(this.n);
         for(Edge x : this.edges){
             int f = x.getFrom();
@@ -154,6 +155,7 @@ public class Flow {
         for(int i = 0; i < this.dist.length; ++i){
             matrix.setDist(i, dist[i]);
         }
+        matrix.setFlow(fl);
         memory.add(matrix);
     }
 

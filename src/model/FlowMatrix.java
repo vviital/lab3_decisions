@@ -9,6 +9,16 @@ public class FlowMatrix {
 
     private int[] dist;
 
+    public long getFlow() {
+        return flow;
+    }
+
+    public void setFlow(long flow) {
+        this.flow = flow;
+    }
+
+    private long flow;
+
     private FlowMatrix(){
 
     }
@@ -30,11 +40,11 @@ public class FlowMatrix {
         return this.dist[index];
     }
 
-    public int getDistLength(){
-        return this.dist.length;
-    }
-
     public void setDist(int index, int value){
         this.dist[index] = value;
+    }
+
+    public int size(){
+        return this.arr.length;
     }
 }
